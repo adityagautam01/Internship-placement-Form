@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOC Form</title>
+  <style>
+    :root {
+      --bg: #dce2e6;
+      --card: #f7f7f7;
+      --border: #cdd4da;
+      --primary: #246986;
+      --text: #1c1f23;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      width: min(820px, 94vw);
+      margin: 24px auto;
+    }
+    .banner {
+      background: var(--card);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .banner .top-strip { height: 16px; background: var(--primary); }
+    .banner .content { padding: 28px; }
+    .banner h1 { margin: 0 0 10px; font-size: 42px; font-weight: 400; }
+    .banner p { margin: 0; font-size: 20px; }
+    form { display: grid; gap: 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    label { display: block; font-size: 20px; margin-bottom: 12px; }
+    input {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid #b6bcc1;
+      background: transparent;
+      font-size: 20px;
+      padding: 10px 0;
+      outline: none;
+    }
+    input[readonly] {
+      color: #3a4249;
+    }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0 30px;
+    }
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 26px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .clear {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 20px;
+    }
+    @media (max-width: 768px) {
+      .banner h1 { font-size: 30px; }
+      .banner p { font-size: 16px; }
+      label { font-size: 16px; }
+      input { font-size: 17px; }
+      button { font-size: 18px; }
+      .clear { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="banner">
+      <div class="top-strip"></div>
+      <div class="content">
+        <h1>NOC Form</h1>
+        <p>Verify and submit for NOC PDF generation</p>
+      </div>
+    </div>
+
+    <form action="/submit_noc" method="post">
+      <div class="card">
+        <label>Issued Date</label>
+        <input type="text" value="{{ now_date }}" readonly />
+      </div>
+
+      <div class="card">
+        <label>Letterhead No.</label>
+        <input type="text" name="letterhead_no" value="{{ form_data.letterhead_no }}" readonly />
+      </div>
+
+      <div class="card">
+        <label>Student Name</label>
+        <input type="text" name="student_name" value="{{ form_data.student_name }}" readonly />
+      </div>
+
+      <div class="card">
+        <label>Company Name</label>
+        <input type="text" name="company_name" value="{{ form_data.company_name }}" readonly />
+      </div>
+
+      <div class="card">
+        <label>Recommendation Letter</label>
+        <input type="text" value="{{ form_data.recommendation_letter }}" readonly />
+      </div>
+
+      <div class="card">
+        <label>Date From</label>
+        <input type="text" name="date_from" value="{{ form_data.date_from }}" readonly />
+      </div>
+
+      <div class="card">
+        <label>Date To</label>
+        <input type="text" name="date_to" value="{{ form_data.date_to }}" readonly />
+      </div>
+
+      <input type="hidden" name="roll_no" value="{{ form_data.roll_no }}" />
+      <input type="hidden" name="course" value="{{ form_data.course }}" />
+      <input type="hidden" name="year" value="{{ form_data.year }}" />
+      <input type="hidden" name="phone" value="{{ form_data.phone }}" />
+      <input type="hidden" name="email" value="{{ form_data.email }}" />
+      <input type="hidden" name="reporting_manager" value="{{ form_data.reporting_manager }}" />
+      <input type="hidden" name="recommendation_letter" value="{{ form_data.recommendation_letter }}" />
+      <input type="hidden" name="student_image_size_kb" value="{{ form_data.student_image_size_kb }}" />
+
+      <div class="actions">
+        <button type="submit">Submit</button>
+        <a class="clear" href="/">Back to form</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

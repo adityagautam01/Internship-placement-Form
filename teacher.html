@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: #edf1f4;
+      color: #1d2227;
+    }
+    .wrap {
+      width: min(980px, 95vw);
+      margin: 30px auto;
+      background: #fff;
+      border: 1px solid #ccd5dc;
+      border-radius: 12px;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 18px;
+      color: #205f7a;
+    }
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .head h1 {
+      margin: 0;
+    }
+    .filter-form {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .month-input {
+      border: 1px solid #c8d1d8;
+      border-radius: 6px;
+      padding: 9px 10px;
+      font-size: 14px;
+      background: #fff;
+      color: #1d2227;
+      min-width: 220px;
+    }
+    .filter-card {
+      border: 1px solid #d9e0e6;
+      border-radius: 10px;
+      background: #f8fbfd;
+      padding: 10px 12px;
+      display: grid;
+      gap: 6px;
+    }
+    .muted {
+      font-size: 13px;
+      color: #50606d;
+      margin-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    th, td {
+      border-bottom: 1px solid #e2e7eb;
+      padding: 12px 8px;
+      text-align: left;
+    }
+    th {
+      background: #f6f9fb;
+      color: #33414d;
+    }
+    .btn {
+      background: #205f7a;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      display: inline-block;
+      border: none;
+      cursor: pointer;
+    }
+    .empty {
+      padding: 16px;
+      background: #f7f9fb;
+      border: 1px dashed #c8d1d8;
+      border-radius: 8px;
+    }
+    .noc-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon-btn {
+      border: 1px solid #205f7a;
+      background: #fff;
+      color: #205f7a;
+      border-radius: 6px;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .icon-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+    .select-col {
+      width: 110px;
+      text-align: center;
+    }
+    .row-select {
+      display: none;
+    }
+    .selection-active .row-select {
+      display: inline-block;
+    }
+    .select-toggle {
+      border: 1px solid #205f7a;
+      color: #205f7a;
+      background: #fff;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 8px;
+      cursor: pointer;
+      min-width: 92px;
+    }
+    @media (max-width: 900px) {
+      .head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-form {
+        justify-content: flex-end;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <h1>Teacher Dashboard</h1>
+      <form class="filter-form" method="get" action="/teacher">
+        <div class="filter-card">
+          <select class="month-input" id="month" name="month" title="Select month to view records">
+            <option value="" {% if not selected_month %}selected{% endif %}>All Records</option>
+            {% for item in month_summaries %}
+              <option value="{{ item.value }}" {% if selected_month == item.value %}selected{% endif %}>
+                {{ item.label }} ({{ item.count }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn" id="shareSelectedBtn" type="button">Download ZIP</button>
+      </form>
+    </div>
+    <div class="muted" id="shareMsg">
+      The share icon next to the tip will only download/share internship and nine PDF.
+      Showing {{ filtered_count }} of {{ total_count }} record(s) for {{ selected_month_label }}.
+    </div>
+
+    {% if records %}
+      <table>
+        <thead>
+          <tr>
+            <th class="select-col">
+              <button type="button" id="selectToggle" class="select-toggle" title="Open selection mode">Selected</button>
+            </th>
+            <th>LetterHead No.</th>
+            <th>Student Name</th>
+            <th>Image Size</th>
+            <th>Recommendation Letter</th>
+            <th>Date</th>
+            <th>Internship PDF</th>
+            <th>NOC PDF</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in records %}
+            <tr class="record-row"
+                data-letterhead="{{ row.letterhead_no }}"
+                data-student="{{ row.student_name }}"
+                data-date="{{ row.date }}"
+                data-recommendation="{{ row.recommendation_letter }}"
+                data-internship="{{ row.internship_pdf }}"
+                data-noc="{{ row.noc_pdf }}">
+              <td class="select-col"><input type="checkbox" class="row-select" title="Select this record" /></td>
+              <td>{{ row.letterhead_no }}</td>
+              <td>{{ row.student_name }}</td>
+              <td>
+                {% if row.student_image_size_kb %}
+                  {{ row.student_image_size_kb }} KB
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>
+                {% if row.recommendation_letter %}
+                  <a class="btn" href="/teacher/download-upload/{{ row.recommendation_letter }}">Download</a>
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>{{ row.date }}</td>
+              <td>
+                {% if row.internship_pdf %}
+                  <a class="btn" href="/teacher/download/{{ row.internship_pdf }}">Download</a>
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>
+                {% if row.noc_pdf %}
+                  <div class="noc-actions">
+                    <a class="btn" href="/teacher/download/{{ row.noc_pdf }}">Download</a>
+                    <button
+                      class="icon-btn share-row-btn"
+                      type="button"
+                      title="Download/Share Internship + NOC PDFs"
+                      data-internship="{{ row.internship_pdf }}"
+                      data-noc="{{ row.noc_pdf }}"
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 20c0-6.08 4.92-11 11-11h1V5l7 7-7 7v-4h-1c-3.87 0-7 3.13-7 7H3z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty">No PDF has been generated yet.</div>
+    {% endif %}
+  </div>
+  <script>
+    var shareInProgress = false;
+    var selectionMode = false;
+    setInterval(function () {
+      if (shareInProgress) return;
+      if (selectionMode) return;
+      var monthSelectEl = document.getElementById("month");
+      if (monthSelectEl && document.activeElement === monthSelectEl) return;
+      if (document.querySelector(".row-select:checked")) return;
+      window.location.reload();
+    }, 3000);
+
+    (function () {
+      var shareMsg = document.getElementById("shareMsg");
+      var shareSelectedBtn = document.getElementById("shareSelectedBtn");
+      var shareButtons = Array.prototype.slice.call(document.querySelectorAll(".share-row-btn"));
+      var monthSelect = document.getElementById("month");
+      var selectToggle = document.getElementById("selectToggle");
+      var rowChecks = Array.prototype.slice.call(document.querySelectorAll(".row-select"));
+      var recordRows = Array.prototype.slice.call(document.querySelectorAll(".record-row"));
+      var tableEl = document.querySelector("table");
+
+      if (monthSelect) {
+        monthSelect.addEventListener("change", function () {
+          monthSelect.form.submit();
+        });
+      }
+
+      function updateSelectedLabel() {
+        if (!selectToggle) return;
+        var checkedCount = rowChecks.filter(function (x) { return x.checked; }).length;
+        if (!selectionMode) {
+          selectToggle.textContent = "Selected";
+          return;
+        }
+        selectToggle.textContent = "Select All (" + checkedCount + ")";
+      }
+
+      if (selectToggle) {
+        selectToggle.addEventListener("click", function () {
+          if (!selectionMode) {
+            selectionMode = true;
+            if (tableEl) tableEl.classList.add("selection-active");
+            shareMsg.textContent = "Selection mode on. Now select the records by clicking on Select All, then Download/Share.";
+            updateSelectedLabel();
+            return;
+          }
+          var checkedCount = rowChecks.filter(function (x) { return x.checked; }).length;
+          var shouldSelectAll = checkedCount !== rowChecks.length;
+          rowChecks.forEach(function (cb) {
+            cb.checked = shouldSelectAll;
+          });
+          updateSelectedLabel();
+        });
+      }
+
+      rowChecks.forEach(function (cb) {
+        cb.addEventListener("change", function () {
+          updateSelectedLabel();
+        });
+      });
+      updateSelectedLabel();
+
+      function parseDownloadName(contentDisposition, fallbackName) {
+        if (!contentDisposition) return fallbackName;
+        var match = /filename=\"?([^\";]+)\"?/i.exec(contentDisposition);
+        if (match && match[1]) return match[1];
+        return fallbackName;
+      }
+
+      function downloadBlob(blob, fileName) {
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+      }
+
+      async function createShareZip(pairs) {
+        var allFiles = [];
+        var seen = {};
+        pairs.forEach(function (pair) {
+          var intName = pair.internship || "";
+          var nocName = pair.noc || "";
+          if (intName && !seen[intName]) {
+            seen[intName] = true;
+            allFiles.push(intName);
+          }
+          if (nocName && !seen[nocName]) {
+            seen[nocName] = true;
+            allFiles.push(nocName);
+          }
+        });
+        if (!allFiles.length) throw new Error("No files");
+
+        var res = await fetch("/teacher/share-package", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ files: allFiles })
+        });
+        if (!res.ok) throw new Error("Package build failed");
+        var blob = await res.blob();
+        var name = parseDownloadName(res.headers.get("Content-Disposition"), "selected_pdfs.zip");
+        return { blob: blob, name: name };
+      }
+
+      async function shareOrDownloadPairs(pairs, successMessagePrefix) {
+        shareInProgress = true;
+        try {
+          var zip = await createShareZip(pairs);
+          downloadBlob(zip.blob, zip.name);
+          shareMsg.textContent = successMessagePrefix + " zip downloaded.";
+        } catch (err) {
+          shareMsg.textContent = "Zip download failed. Try again.";
+        } finally {
+          setTimeout(function () { shareInProgress = false; }, 5000);
+        }
+      }
+
+      if (shareSelectedBtn) {
+        shareSelectedBtn.addEventListener("click", async function () {
+          if (!selectionMode) {
+            shareMsg.textContent = "First turn on selection mode by clicking on Selected.";
+            return;
+          }
+          var selectedRows = [];
+          rowChecks.forEach(function (cb, idx) {
+            if (cb.checked) selectedRows.push(recordRows[idx]);
+          });
+          if (!selectedRows.length) {
+            shareMsg.textContent = "First select the records, then click on download zip.";
+            return;
+          }
+          var pairs = selectedRows.map(function (row) {
+            return {
+              internship: row.dataset.internship || "",
+              noc: row.dataset.noc || ""
+            };
+          }).filter(function (pair) {
+            return pair.internship && pair.noc;
+          });
+          if (!pairs.length) {
+            shareMsg.textContent = "Internship + Nok Padfus are not available in the selected month records.";
+            return;
+          }
+          shareMsg.textContent = "Only Internship + Note Padfus of selected month will be downloaded/shared.";
+          await shareOrDownloadPairs(pairs, "Selected PDFs");
+        });
+      }
+
+      shareButtons.forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          var intFile = btn.getAttribute("data-internship") || "";
+          var nocFile = btn.getAttribute("data-noc") || "";
+          if (!intFile || !nocFile) {
+            shareMsg.textContent = "Internship/NOC PDF record missing.";
+            return;
+          }
+          await shareOrDownloadPairs(
+            [{ internship: intFile, noc: nocFile }],
+            "Record PDFs"
+          );
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Internship/Placement Form</title>
+  <style>
+    :root {
+      --bg: #dce2e6;
+      --card: #f7f7f7;
+      --border: #cdd4da;
+      --primary: #246986;
+      --text: #1c1f23;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      width: min(820px, 94vw);
+      margin: 24px auto;
+    }
+    .banner {
+      background: var(--card);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .banner .top-strip { height: 16px; background: var(--primary); }
+    .banner .content { padding: 28px; }
+    .banner h1 { margin: 0 0 10px; font-size: 48px; font-weight: 400; }
+    .banner p { margin: 0; font-size: 22px; }
+    form { display: grid; gap: 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    label { display: block; font-size: 20px; margin-bottom: 12px; }
+    .req { color: #b42a2a; }
+    input, select {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid #b6bcc1;
+      background: transparent;
+      font-size: 22px;
+      padding: 10px 0;
+      outline: none;
+    }
+    .radio-group {
+      display: grid;
+      gap: 12px;
+      font-size: 24px;
+    }
+    .radio-group label {
+      font-size: 28px;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .radio-group input[type="radio"] { width: 22px; height: 22px; }
+    .file-input input { border: none; font-size: 16px; }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0 30px;
+    }
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 26px;
+      font-size: 28px;
+      cursor: pointer;
+    }
+    .clear {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 24px;
+    }
+    @media (max-width: 768px) {
+      .banner h1 { font-size: 32px; }
+      .banner p { font-size: 16px; }
+      label { font-size: 16px; }
+      input, select { font-size: 18px; }
+      .radio-group label { font-size: 22px; }
+      button { font-size: 20px; }
+      .clear { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="banner">
+      <div class="top-strip"></div>
+      <div class="content">
+        <h1>Internship/Placement Form</h1>
+        <p>Start Your Professional Journey With Rama University</p>
+      </div>
+    </div>
+
+    <form action="/noc" method="post" enctype="multipart/form-data">
+      <div class="card">
+        <label>Letterhead Sr. No. (last 4 digit) <span class="req">*</span></label>
+        <input type="text" name="letterhead_no" required maxlength="4" pattern="\d{4}" />
+      </div>
+
+      <div class="card">
+        <label>Student Name <span class="req">*</span></label>
+        <input type="text" name="student_name" required />
+      </div>
+
+      <div class="card">
+        <label>Roll No. <span class="req">*</span></label>
+        <input type="text" name="roll_no" required />
+      </div>
+
+      <div class="card">
+        <label>Phone Number <span class="req">*</span></label>
+        <input type="tel" name="phone" required />
+      </div>
+
+      <div class="card">
+        <label>Email <span class="req">*</span></label>
+        <input type="email" name="email" required />
+      </div>
+
+      <div class="card">
+        <label>Course <span class="req">*</span></label>
+        <input
+          id="course"
+          type="text"
+          name="course"
+          list="course-options"
+          required
+          autocomplete="off"
+          placeholder="Select or type course"
+        />
+        <datalist id="course-options">
+          <option value="BCA"></option>
+          <option value="BSC.BT"></option>
+          <option value="BSC.AG"></option>
+          <option value="B.Tech.CS"></option>
+          <option value="B.Tech.BT"></option>
+          <option value="B.Tech.Mach"></option>
+          <option value="MSC.BT"></option>
+          <option value="MSC.AG"></option>
+          <option value="M.Tech.CS"></option>
+          <option value="M.Tech.BT"></option>
+          <option value="M.Tech.Mach"></option>
+          <option value="BALLB"></option>
+          <option value="BBALLB"></option>
+          <option value="LLB"></option>
+          <option value="LLM"></option>
+          <option value="Nursing"></option>
+          <option value="Paramedical"></option>
+          <option value="D.Pharma"></option>
+          <option value="B.Pharma"></option>
+          <option value="M.Pharma"></option>
+          <option value="BBA"></option>
+          <option value="B.Com"></option>
+          <option value="MBA"></option>
+          <option value="BAMS"></option>
+          <option value="Other"></option>
+        </datalist>
+        <input id="course_other" type="text" name="course_other" placeholder="If Other, write course name" style="display:none; margin-top:10px;" />
+      </div>
+
+      <div class="card">
+        <label>Year <span class="req">*</span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="year" value="1" required /> 1</label>
+          <label><input type="radio" name="year" value="2" /> 2</label>
+          <label><input type="radio" name="year" value="3" /> 3</label>
+          <label><input type="radio" name="year" value="4" /> 4</label>
+          <label><input type="radio" name="year" value="5" /> 5</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>Date From <span class="req">*</span></label>
+        <input type="date" name="date_from" required />
+      </div>
+
+      <div class="card">
+        <label>Date To <span class="req">*</span></label>
+        <input type="date" name="date_to" required />
+      </div>
+
+      <div class="card">
+        <label>Reporting Manager / Advocate Name <span class="req">*</span></label>
+        <input type="text" name="reporting_manager" required />
+      </div>
+
+      <div class="card">
+        <label>Company Name / Court Name (With City Name) <span class="req">*</span></label>
+        <input type="text" name="company_name" required />
+      </div>
+
+      <div class="card file-input">
+        <label>Recommendation letter <span class="req">*</span></label>
+        <input type="file" name="recommendation_letter" id="recommendation_letter" accept=".jpg,.jpeg,.png,image/png,image/jpeg" required />
+      </div>
+
+      <div class="actions">
+        <button type="submit">NEXT</button>
+        <a class="clear" href="/">Clear form</a>
+      </div>
+    </form>
+  </div>
+</body>
+<script>
+  (function () {
+    const courseInput = document.getElementById("course");
+    const otherInput = document.getElementById("course_other");
+    const recommendationInput = document.getElementById("recommendation_letter");
+    const maxSize = 500 * 1024;
+    const minSize = 200 * 1024;
+
+    function toggleOtherField() {
+      const isOther = (courseInput.value || "").trim().toLowerCase() === "other";
+      otherInput.style.display = isOther ? "block" : "none";
+      otherInput.required = isOther;
+      if (!isOther) otherInput.value = "";
+    }
+
+    courseInput.addEventListener("focus", function () {
+      if (typeof courseInput.showPicker === "function") {
+        courseInput.showPicker();
+      }
+    });
+    courseInput.addEventListener("input", toggleOtherField);
+    courseInput.addEventListener("change", toggleOtherField);
+
+    if (recommendationInput) {
+      recommendationInput.addEventListener("change", function () {
+        const file = recommendationInput.files && recommendationInput.files[0];
+        if (!file) return;
+        if (file.size < minSize || file.size > maxSize) {
+          alert("Student image size should be between 200kb to 500kb.");
+          recommendationInput.value = "";
+        }
+      });
+    }
+  })();
+</script>
+</html>
